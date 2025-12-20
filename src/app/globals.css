@@ -1,0 +1,101 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Skeleton loader animations */
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-loader {
+  border-radius: 4px;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+/* Car card skeleton specific styles */
+.car-block-three .skeleton-loader {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 37%, #f8f9fa 63%);
+  background-size: 400% 100%;
+  border-radius: 6px;
+}
+
+/* Light theme optimized skeleton */
+.skeleton-loader {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 37%, #f8f9fa 63%) !important;
+  background-size: 400% 100% !important;
+}
+
+/* Image loading animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Image loading transition effects */
+.image-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-box figure.image {
+  position: relative;
+  margin: 0;
+}
+
+/* Smooth transitions for progressive image loading */
+.image-box img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.3s ease-in-out;
+}
