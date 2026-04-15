@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+       <meta name="google-site-verification" content="SPGcVMGv9XGAxJI54B3vrCKZb_3FYCM80LtMgsx9L3I" />
         <Script id="gtm" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
