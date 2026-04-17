@@ -28,6 +28,20 @@ const BlogCard = ({ data }) => {
               {/* This Long-Awaited Technology May Finally Change the World */}
             </a>
           </h6>
+          {data?.description && (
+             <div 
+               style={{ 
+                 display: '-webkit-box', 
+                 WebkitLineClamp: 2, 
+                 WebkitBoxOrient: 'vertical', 
+                 overflow: 'hidden', 
+                 marginTop: '10px',
+                 color: '#777',
+                 fontSize: '14px'
+               }}
+               dangerouslySetInnerHTML={{ __html: data.description }} 
+             />
+          )}
         </div>
       </div>
     </div>
