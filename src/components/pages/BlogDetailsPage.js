@@ -6,16 +6,21 @@ import { assetUrl } from "@/services/constants";
 import Link from "next/link";
 import blogFallback from '../../assets/images/blog.jpg';
 
-const BlogDetailsPage = ({ slug }) => {
-    const [blogDetails, setBlogDetails] = useState();
+const BlogDetailsPage = ({ slug, initialData }) => {
+    const [blogDetails, setBlogDetails] = useState(initialData);
+
     const getBlogDetails = async () => {
         const queryString = "?sort=-date_created&filter[slug][_eq]=" + slug;
         const response = await ApiService('items/blogs' + queryString, 'get');
         setBlogDetails(response.data[0]);
     }
+
     useEffect(() => {
-        getBlogDetails();
-    }, [])
+        if (!initialData) {
+            getBlogDetails();
+        }
+    }, [initialData, slug])
+
     return (
         <section className="blog-section-five layout-radius">
             <div className="boxcar-container">
@@ -38,17 +43,17 @@ const BlogDetailsPage = ({ slug }) => {
             </div>
             <div className="boxcar-container">
                 <figure className="text-center" style={{ marginBottom: '30px' }}>
-                    <img 
-                        src={blogDetails?.image ? assetUrl + blogDetails?.image : blogFallback.src} 
-                        alt={blogDetails?.tittle || ''} 
-                        style={{ maxWidth: '100%', height: 'auto', borderRadius: '16px' }} 
+                    <img
+                        src={blogDetails?.image ? assetUrl + blogDetails?.image : blogFallback.src}
+                        alt={blogDetails?.tittle || ''}
+                        style={{ maxWidth: '100%', height: 'auto', borderRadius: '16px' }}
                     />
                 </figure>
-                <div style={{ 
-                    maxWidth: '924px', 
-                    margin: '0 auto', 
-                    color: '#333', 
-                    fontSize: '15px', 
+                <div style={{
+                    maxWidth: '924px',
+                    margin: '0 auto',
+                    color: '#333',
+                    fontSize: '15px',
                     lineHeight: '28px',
                     paddingBottom: '60px'
                 }}>
