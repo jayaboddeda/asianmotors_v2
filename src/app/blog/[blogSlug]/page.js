@@ -56,6 +56,17 @@ function isValidJson(str) {
     }
 }
 
+function compact(obj) {
+    const out = {};
+    for (const key in obj) {
+        const val = obj[key];
+        if (val === undefined || val === null || val === "") continue;
+        if (Array.isArray(val) && val.length === 0) continue;
+        out[key] = val;
+    }
+    return out;
+}
+
 export async function generateMetadata({ params }) {
     const resolved = typeof params?.then === "function" ? await params : params;
     const slug = resolved?.blogSlug;
@@ -71,44 +82,52 @@ export async function generateMetadata({ params }) {
         pickMeta(parsed, "name", "twitter:description") ||
         pickMeta(parsed, "name", "description");
 
-    const ogWidth = parseInt(pickMeta(parsed, "property", "og:image:width") || "", 10);
-    const ogHeight = parseInt(pickMeta(parsed, "property", "og:image:height") || "", 10);
+    const ogWidthRaw = pickMeta(parsed, "property", "og:image:width");
+    const ogHeightRaw = pickMeta(parsed, "property", "og:image:height");
+    const ogWidth = ogWidthRaw ? parseInt(ogWidthRaw, 10) : undefined;
+    const ogHeight = ogHeightRaw ? parseInt(ogHeightRaw, 10) : undefined;
 
-    return {
-        title: (blog.tittle || "").trim(),
+    const openGraph = compact({
+        title: pickMeta(parsed, "property", "og:title"),
+        description: pickMeta(parsed, "property", "og:description"),
+        url: pickMeta(parsed, "property", "og:url"),
+        siteName: pickMeta(parsed, "property", "og:site_name"),
+        type: pickMeta(parsed, "property", "og:type"),
+        locale: pickMeta(parsed, "property", "og:locale"),
+        publishedTime: pickMeta(parsed, "property", "article:published_time"),
+        modifiedTime: pickMeta(parsed, "property", "article:modified_time"),
+        section: pickMeta(parsed, "property", "article:section"),
+        tags: pickMeta(parsed, "property", "article:tag"),
+        images: ogImage
+            ? [
+                  compact({
+                      url: ogImage,
+                      width: Number.isFinite(ogWidth) ? ogWidth : undefined,
+                      height: Number.isFinite(ogHeight) ? ogHeight : undefined,
+                      alt: pickMeta(parsed, "property", "og:image:alt"),
+                  }),
+              ]
+            : undefined,
+    });
+
+    const twitter = compact({
+        card: pickMeta(parsed, "name", "twitter:card"),
+        site: pickMeta(parsed, "name", "twitter:site"),
+        title: pickMeta(parsed, "name", "twitter:title"),
+        description: pickMeta(parsed, "name", "twitter:description"),
+        images: twitterImage ? [twitterImage] : undefined,
+    });
+
+    const title = (blog.tittle || "").trim();
+
+    return compact({
+        title: title || undefined,
         description,
         alternates: canonical ? { canonical } : undefined,
         robots: pickMeta(parsed, "name", "robots"),
-        openGraph: {
-            title: pickMeta(parsed, "property", "og:title"),
-            description: pickMeta(parsed, "property", "og:description"),
-            url: pickMeta(parsed, "property", "og:url"),
-            siteName: pickMeta(parsed, "property", "og:site_name"),
-            type: pickMeta(parsed, "property", "og:type"),
-            locale: pickMeta(parsed, "property", "og:locale"),
-            publishedTime: pickMeta(parsed, "property", "article:published_time"),
-            modifiedTime: pickMeta(parsed, "property", "article:modified_time"),
-            section: pickMeta(parsed, "property", "article:section"),
-            tags: pickMeta(parsed, "property", "article:tag"),
-            images: ogImage
-                ? [
-                      {
-                          url: ogImage,
-                          width: Number.isFinite(ogWidth) ? ogWidth : undefined,
-                          height: Number.isFinite(ogHeight) ? ogHeight : undefined,
-                          alt: pickMeta(parsed, "property", "og:image:alt"),
-                      },
-                  ]
-                : undefined,
-        },
-        twitter: {
-            card: pickMeta(parsed, "name", "twitter:card"),
-            site: pickMeta(parsed, "name", "twitter:site"),
-            title: pickMeta(parsed, "name", "twitter:title"),
-            description: pickMeta(parsed, "name", "twitter:description"),
-            images: twitterImage ? [twitterImage] : undefined,
-        },
-    };
+        openGraph: Object.keys(openGraph).length ? openGraph : undefined,
+        twitter: Object.keys(twitter).length ? twitter : undefined,
+    });
 }
 
 const BlogDetails = async ({ params }) => {
